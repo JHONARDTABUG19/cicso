@@ -1,0 +1,15 @@
+blocks = int(input("Enter the number of blocks: "))
+sum = 0
+height = 0
+i = 1
+while sum != blocks:
+    sum += i
+    if sum > blocks:
+        break
+    i += 1
+    height += 1
+# Write your code here.
+#	
+
+print("The height of the pyramid:", height)
+
