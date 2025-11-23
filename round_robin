@@ -1,0 +1,70 @@
+# Ask user how many processes to simulate
+num_processes = int(input("How many processes? "))
+
+# Ask user for the time slice (quantum)
+time_slice = int(input("Input time slice: "))
+
+# List to store burst times of each process
+burst_times = []
+
+# Input burst time for each process P1, P2, P3...Pn
+for i in range(num_processes):
+    bt = int(input(f"Input burst time for process P{i+1}: "))
+    burst_times.append(bt)
+
+# Make a copy of burst times (this will decrease during execution)
+remaining = burst_times.copy()
+
+# Global time counter (CPU time)
+time = 0
+
+# List to store Gantt chart entries:
+# Each entry = (process name, start time, end time)
+gantt_chart = []
+
+# =============== ROUND ROBIN LOOP ====================
+while True:
+    done = True   # Assume all processes are finished
+
+    # Loop through all processes in order
+    for i in range(num_processes):
+        
+        # If this process still has burst time left
+        if remaining[i] > 0:
+            done = False   # There is still work to do
+
+            start = time   # Record when the CPU starts executing this process
+
+            # If remaining time is more than the time slice,
+            # run only for the time slice
+            if remaining[i] > time_slice:
+                time += time_slice          # Advance time by the quantum
+                remaining[i] -= time_slice  # Reduce remaining time
+            else:
+                # Otherwise, finish the process completely
+                time += remaining[i]        # Advance by its remaining time
+                remaining[i] = 0            # Process is now finished
+
+            end = time    # Time after execution ends
+
+            # Add a Gantt chart bar entry (process name + start + end)
+            gantt_chart.append((f"P{i+1}", start, end))
+
+    # If no process executed in this loop, all are done → exit loop
+    if done:
+        break
+
+
+# ============================
+# PRINT ASCII GANTT CHART
+# ============================
+
+# Print timeline numbers (e.g., "0---3   3---6   6---9")
+for (p, start, end) in gantt_chart:
+    print(f" {start}---{end}", end="   ")
+print()
+
+# Print the process blocks under the timeline
+for (p, start, end) in gantt_chart:
+    print(f"| {p} |", end="   ")
+print()
